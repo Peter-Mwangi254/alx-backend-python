@@ -19,9 +19,9 @@ nested_map={"a": {"b": 2}}, path=("a", "b")
 """
 
 import unittest
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from unittest.mock import patch
-from typing import Mapping, Tuple, Union, Type
+from typing import Mapping, Tuple, Union, Type, Dict
 from parameterized import parameterized
 
 
@@ -67,7 +67,8 @@ class TestGetJson(unittest.TestCase):
             ('http://holberton.io', {'payload': False})
         ]
     )
-    def test_get_json(self, test_url, test_payload):
+    def test_get_json(self, test_url: str, test_payload:
+                      Dict[str, bool]) -> None:
         """
         _summart_
         """
@@ -76,3 +77,44 @@ class TestGetJson(unittest.TestCase):
             self.assertEqual(get_json(test_url), test_payload)
 
             mock.assert_called_once_with(test_url)
+
+
+class TestMemoize(unittest.TestCase):
+    """
+    _summary_
+    Args:
+                    unittest (_type_): _description_
+    """
+    def test_memoize(self):
+        """_summary_
+
+        Returns:
+                _type_: _description_
+        """
+        class TestClass:
+            """
+            _summary_
+            """
+
+            def a_method(self):
+                """_summary_
+
+                Returns:
+                        _type_: _description_
+                """
+                return 42
+
+            @memoize
+            def a_property(self):
+                """_summary_
+
+                Returns:
+                        _type_: _description_
+                """
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method', return_value=42) as a_mocked:
+            test = TestClass()
+            test.a_property
+            test.a_property
+            a_mocked.assert_called_once()
