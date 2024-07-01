@@ -20,16 +20,34 @@ nested_map={"a": {"b": 2}}, path=("a", "b")
 
 import unittest
 from utils import access_nested_map
-from typing import Mapping, Tuple, Union
+from typing import Mapping, Tuple, Union, Type
 from parameterized import parameterized
 
 
 class TestAccessNestedMap(unittest.TestCase):
+    """_summary_
+
+    Args:
+        unittest (_type_): _description_
+    """
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2)
     ])
     def test_access_nested_map(self, nested_map: Mapping, path: Tuple[str],
-                        expected_output: Union[Mapping, int]) -> None:
+                        expected: Union[Mapping, int]) -> None:
+    """_summary_
+    """
         self.assertEqual(access_nested_map(nested_map, path), expected)
+
+    @parameterized.expand([
+        ({},("a",), KeyError),
+        ({"a": 1}, ("a", "b"), KeyError)
+    ])
+    def test_access_nested_map_exception(self, nested_map: Mapping, path: Tuple[str],
+                        expected: Type[Exception]) -> None:
+    """_summary_
+    """
+        with self.assertRaises(expected):
+            access_nested_map(nested_map, path)
