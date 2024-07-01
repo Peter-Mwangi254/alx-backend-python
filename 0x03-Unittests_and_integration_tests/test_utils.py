@@ -19,7 +19,8 @@ nested_map={"a": {"b": 2}}, path=("a", "b")
 """
 
 import unittest
-from utils import access_nested_map
+from utils import access_nested_map, get_json
+from unittest.mock import patch
 from typing import Mapping, Tuple, Union, Type
 from parameterized import parameterized
 
@@ -52,3 +53,26 @@ class TestAccessNestedMap(unittest.TestCase):
         """
         with self.assertRaises(expected):
             access_nested_map(nested_map, path)
+
+
+class TestGetJson(unittest.TestCase):
+    """
+    _summary_
+    Args:
+                    unittest (_type_): _description_
+    """
+    @parameterized.expand(
+        [
+            ('http://example.com', {'payload': True}),
+            ('http://holberton.io', {'payload': False})
+        ]
+    )
+    def test_get_json(self, test_url, test_payload):
+        """
+        _summart_
+        """
+        with patch("utils.requests.get") as mock:
+            mock.return_value.json.return_value = test_payload
+            self.assertEqual(get_json(test_url), test_payload)
+
+            mock.assert_called_once_with(test_url)
